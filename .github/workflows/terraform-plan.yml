@@ -44,7 +44,7 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       AWS_ACCESS_KEY_ID: ${{secrets.INCUBATOR_AWS_ACCESS_KEY_ID}}
-      AWS_SECRET_ACCESS_KEY: ${{secrets.INCUBATOR_AWS_SECRET_ACCESS_KEY}}    
+      AWS_SECRET_ACCESS_KEY: ${{secrets.INCUBATOR_AWS_SECRET_ACCESS_KEY}}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -61,7 +61,7 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       AWS_ACCESS_KEY_ID: ${{secrets.INCUBATOR_AWS_ACCESS_KEY_ID}}
-      AWS_SECRET_ACCESS_KEY: ${{secrets.INCUBATOR_AWS_SECRET_ACCESS_KEY}}    
+      AWS_SECRET_ACCESS_KEY: ${{secrets.INCUBATOR_AWS_SECRET_ACCESS_KEY}}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -78,7 +78,7 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       AWS_ACCESS_KEY_ID: ${{secrets.INCUBATOR_AWS_ACCESS_KEY_ID}}
-      AWS_SECRET_ACCESS_KEY: ${{secrets.INCUBATOR_AWS_SECRET_ACCESS_KEY}}    
+      AWS_SECRET_ACCESS_KEY: ${{secrets.INCUBATOR_AWS_SECRET_ACCESS_KEY}}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -87,3 +87,17 @@ jobs:
         uses: dflook/terraform-plan@v1
         with:
           path: terraform-incubator/people-depot/dev
+  terraform-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Render terraform docs inside the README.md and push changes back to PR branch
+        uses: terraform-docs/gh-actions@v1.1.0
+        with:
+          working-dir: .
+          output-file: README.md
+          output-method: inject
+          git-push: "true"
