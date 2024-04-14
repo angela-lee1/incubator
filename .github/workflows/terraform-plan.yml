@@ -104,7 +104,7 @@ jobs:
       - name: Clean up existing Terraform docs
         run: |
           find terraform-modules -name "README.md" -type f -delete
-          find terraform-incubator -name "readme.md" -type f -delete
+          find terraform-incubator -name "README.md" -type f -delete
 
       - name: Render terraform docs inside the README.md and push changes back to PR branch
         uses: terraform-docs/gh-actions@v1.1.0
