@@ -88,6 +88,7 @@ jobs:
         with:
           path: terraform-incubator/people-depot/dev
   terraform-docs:
+    if: ${{ github.event_name == 'pull_request' && github.event.action == 'opened' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
