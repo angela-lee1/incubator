@@ -87,29 +87,3 @@ jobs:
         uses: dflook/terraform-plan@v1
         with:
           path: terraform-incubator/people-depot/dev
-  terraform-docs:
-    if: ${{ github.event_name == 'pull_request' && github.event.action == 'opened' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-
-      - name: Install Terraform Docs
-        run: |
-          curl -LJO https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-linux-amd64.tar.gz
-          tar -xzf terraform-docs-v0.16.0-linux-amd64.tar.gz
-          sudo mv terraform-docs /usr/local/bin/
-
-      - name: Clean up existing Terraform docs
-        run: |
-          find terraform-modules -name "README.md" -type f -delete
-          find terraform-incubator -name "README.md" -type f -delete
-
-      - name: Render terraform docs inside the README.md and push changes back to PR branch
-        uses: terraform-docs/gh-actions@v1.1.0
-        with:
-          working-dir: .
-          output-file: README.md
-          output-method: inject
-          git-push: "true"
