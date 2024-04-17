@@ -1,0 +1,39 @@
+name: Generate terraform docs
+
+on:
+  pull_request:
+    paths:
+      - "**/*.tf"
+
+jobs:
+  terraform-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Generate Terraform docs terraform-modules
+        uses: terraform-docs/gh-actions@v1.1.0
+        with:
+          working-dir: terraform-modules
+          output-file: README.md
+          output-method: inject
+          git-push: "true"
+      - name: Generate Terraform docs terraform-incubator access-the-data
+        uses: terraform-docs/gh-actions@v1.1.0
+        with:
+          working-dir: terraform-incubator/access-the-data
+          output-file: README.md
+          output-method: inject
+          git-push: "true"
+
+      - name: Generate Terraform docs terraform-incubator shared_resources vrms-backend people-depot
+        uses: terraform-docs/gh-actions@v1.1.0
+        with:
+          working-dir: terraform-incubator/shared_resources,terraform-incubator/vrms-backend, terraform-incubator/people-depot
+          output-file: README.md
+          recursive: true
+          recursive-path: .
+          output-method: inject
+          git-push: "true"
