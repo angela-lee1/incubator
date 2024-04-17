@@ -1,42 +1,22 @@
-name: Terraform Docs
+name: Generate terraform docs
 
 on:
   pull_request:
 
 jobs:
-  terraform-docs:
+  docs:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.ref }}
-      - name: Install Terraform Docs
-        run: |
-          curl -LJO https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-linux-amd64.tar.gz
-          tar -xzf terraform-docs-v0.16.0-linux-amd64.tar.gz
-          sudo mv terraform-docs /usr/local/bin/
 
-      - name: Generate Terraform documentation for terraform-incubator
-        run: |
-          for file in $(find terraform-incubator -name "main.tf"); do
-            dir=$(dirname "$file")
-            terraform-docs markdown "$dir" > "$dir/README.md"
-          done
-
-      - name: Generate Terraform documentation for terraform-modules
-        run: |
-          for file in $(find terraform-modules -name "main.tf"); do
-            dir=$(dirname "$file")
-            terraform-docs markdown "$dir" > "$dir/README.md"
-          done
-
-      - name: Add, commit and push changes
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        run: |
-          git config --global user.email "angelawlee@rocketmail.com"
-          git config --global user.name "Angela Lee"
-          git add terraform-incubator terraform-modules
-          git commit -m "Update Terraform documentation"
-          git push
+      - name: Generate TF docs
+        uses: terraform-docs/gh-actions@v1.1.0
+        with:
+          working-dir: .
+          recursive: true
+          recursive-path: terraform-incubator terraform-modules
+          output-file: README.md
+          output-method: inject
+          git-push: "true"
