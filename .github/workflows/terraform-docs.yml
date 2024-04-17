@@ -7,15 +7,31 @@ jobs:
   terraform-docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.ref }}
 
-      - name: Render terraform docs inside the README.md and push changes back to PR branch
-        uses: terraform-docs/gh-actions@v1.1.0
-        with:
-          working-dir: .
-          output-file: README.md
-          output-method: inject
-          git-push: "true"
-          token: ${{ secrets.MY_GITHUB_TOKEN }}
+      - name: Generate Terraform documentation for terraform-incubator
+        run: |
+          for file in $(find terraform-incubator -name "main.tf"); do
+            dir=$(dirname "$file")
+            terraform-docs markdown "$dir" > "$dir/README.md"
+          done
+
+      - name: Generate Terraform documentation for terraform-modules
+        run: |
+          for file in $(find terraform-modules -name "main.tf"); do
+            dir=$(dirname "$file")
+            terraform-docs markdown "$dir" > "$dir/README.md"
+          done
+
+      - name: Add, commit and push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+          git add terraform-incubator terraform-modules
+          git commit -m "Update Terraform documentation"
+          git push
