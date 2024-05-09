@@ -12,11 +12,18 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
 
+      - name: Set up Terraform Docs
+        run: |
+          curl -LJO https://github.com/terraform-docs/terraform-docs/releases/download/v0.15.0/terraform-docs-v0.15.0-linux-amd64.tar.gz
+          tar -xzf terraform-docs-v0.15.0-linux-amd64.tar.gz
+          sudo mv terraform-docs /usr/local/bin/
+          rm terraform-docs-v0.15.0-linux-amd64.tar.gz
+
       - name: Generate and commit Terraform docs for each directory
         run: |
           find . -type f -name "*.tf" -exec dirname {} \; | sort -u | while read -r directory; do
             echo "Generating Terraform docs for $directory"
-            terraform-docs/gh-actions@v1.1.0 --output-file "${directory}/README.md" "${directory}"
+            terraform-docs markdown "${directory}" > "${directory}/README.md"
             git -C "${directory}" add README.md
             git -C "${directory}" commit -m "Update Terraform docs"
           done
