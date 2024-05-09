@@ -8,16 +8,22 @@ jobs:
   terraform-docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Set up Terraform Docs
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.ref }}
 
-      - name: Set up Terraform Docs
+      - name: Install Terraform Docs
         run: |
           curl -LJO https://github.com/terraform-docs/terraform-docs/releases/download/v0.15.0/terraform-docs-v0.15.0-linux-amd64.tar.gz
           tar -xzf terraform-docs-v0.15.0-linux-amd64.tar.gz
           sudo mv terraform-docs /usr/local/bin/
           rm terraform-docs-v0.15.0-linux-amd64.tar.gz
+
+      - name: Set Git user
+        run: |
+          git config --global user.email "angelawlee@rocketmail.com"
+          git config --global user.name "awlfccamp"
 
       - name: Generate and commit Terraform docs for each directory
         run: |
