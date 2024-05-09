@@ -33,3 +33,6 @@ jobs:
             git -C "${directory}" add README.md
             git -C "${directory}" commit -m "Update Terraform docs"
           done
+
+      - name: Push changes to GitHub
+        run: git push
